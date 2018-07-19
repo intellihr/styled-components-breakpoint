@@ -1,6 +1,6 @@
 {
   "name": "@intellihr/styled-components-breakpoint",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Utility functions for creating breakpoints in styled-components.",
   "main": "lib/index.js",
   "scripts": {
