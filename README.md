@@ -14,9 +14,9 @@ More on mixins and [Styled Components](https://www.styled-components.com/) in [t
 
 ### Installation
 ```sh
-yarn install @humblebee/styled-components-breakpoint
+yarn install @intellihr/styled-components-breakpoint
 # or
-npm install @humblebee/styled-components-breakpoint
+npm install @intellihr/styled-components-breakpoint
 ```
 ---
 
@@ -25,9 +25,18 @@ npm install @humblebee/styled-components-breakpoint
 The default export of `styled-components-breakpoint` is a function that accepts a `config` object of breakpoints. This will return an object with three main utility methods/mixins: `up` (min-width), `down` (max-width) and `only` (a range between two media queries), all described in detail below.
 
 ```javascript
-import styledBreakpoint from '@humblebee/styled-components-breakpoint';
+import styledBreakpoint from '@intellihr/styled-components-breakpoint';
 
-// Creates an object with breakpoint utility methods.
+/**
+ * Creates an object with breakpoint utility methods.
+ *
+ * xxs: 0 ~ 319
+ * xs: 320 ~ 575
+ * s: 576 ~ 767
+ * m: 768 ~ 991
+ * l: 992 ~ 1199
+ * xl: >=1200
+ */
 export const breakpoint = styledBreakpoint({
   xxs: 0,
   xs: 320,
@@ -36,6 +45,7 @@ export const breakpoint = styledBreakpoint({
   l: 992,
   xl: 1200,
 });
+
 ```
 
 #### Up
@@ -48,21 +58,27 @@ breakpoint.up('m')
 #### Down
 ```javascript
 breakpoint.down('m')
-// Will return a media query with a max-width of 768
-// @media only screen and (max-width: 768px)
+// Will return a media query with a max-width of 991
+// @media only screen and (max-width: 991px)
 ```
 
 #### Only
 ```javascript
 breakpoint.only('m')
 // Will return a range media query between "m" and the next upper breakpoint "l"
-// @media only screen and (min-width: 768px) and (max-width: 1200px)
+// @media only screen and (min-width: 768px) and (max-width: 991px)
+```
+
+```javascript
+breakpoint.only('s', 'l')
+// Will return a range media query between "s" and the breakpoint passed as the second argument, "l"
+// @media only screen and (min-width: 576px) and (max-width: 1199px)
 ```
 
 ```javascript
 breakpoint.only('m', 'xl')
-// Will return a range media query between "m" and the breakpoint passed as the second argument, "xl"
-// @media only screen and (min-width: 768px) and (max-width: 1200px)
+// Will return a range media query between "m" and the max breakpoint passed as the second argument, "xl"
+// @media only screen and (min-width: 768px)
 ```
 
 #### Shorthand
@@ -90,7 +106,7 @@ This is the folder structure we'll be working with.
 
 `themes/mixins.js`
 ```javascript
-import styledBreakpoint from '@humblebee/styled-components-breakpoint';
+import styledBreakpoint from '@intellihr/styled-components-breakpoint';
 
 // Create an instance of styled-components-breakpoint and pass it an object of breakpoints.
 export const breakpoint = styledBreakpoint({

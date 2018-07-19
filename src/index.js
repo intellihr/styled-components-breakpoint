@@ -1,4 +1,5 @@
 // @flow
+import _ from 'lodash';
 import { css } from 'styled-components';
 
 // Flow-types
@@ -10,7 +11,7 @@ export const mediaWidthRule = (rule: Rule) => (
   `${{ up: 'min', down: 'max' }[rule] || 'min'}-width`
 );
 
-export const ruleTemplate = (rule: Rule, width: number) => `(${rule}: ${width}px)`;
+export const ruleTemplate = (rule: Rule, width?: number) => `(${rule}: ${width}px)`;
 export const mediaTemplate = (rules: string) => (
   `@media only screen and ${rules}`
 );
@@ -40,15 +41,62 @@ export const getNextMedia = (breakpoints: Breakpoints, width: number): number =>
   }, undefined));
 
   if (nextBreakpoint === width) {
-    throw new Error(`The breakpoint of value ${nextBreakpoint} is the heighst there is, did you mean to use "[media].up"?`);
+    throw new Error(`The breakpoint of value ${nextBreakpoint} is the heighst, did you mean to use "[media].up"?`);
   }
   return nextBreakpoint;
 };
 
+const getBound = (breakpoints: Breakpoints, boundKey: string) => {
+  const upperBound = _(breakpoints)
+    .values()
+    .sortBy()
+    .find(breakpoint => breakpoint > breakpoints[boundKey]);
+
+  if (!upperBound) {
+    throw new Error(`The breakpoint of value ${boundKey} is the heighst, did you mean to use "[media].up"?`);
+  }
+
+  return upperBound ? upperBound - 1 : false;
+};
+
+const getWidthKeyAndBoundKey = (breakpoints: Breakpoints, widthKey: string, boundKey?: string) => {
+  let keys = {
+    widthKey,
+    boundKey,
+  };
+
+  /**
+   * Swap keys if width > bound
+   */
+  if (boundKey) {
+    const width = breakpoints[widthKey];
+    const bound = breakpoints[boundKey];
+
+    if (width > bound) {
+      keys = {
+        widthKey: boundKey,
+        boundKey: widthKey,
+      };
+    }
+  }
+
+  return keys;
+};
+
 export const mediaRules =
-(breakpoints: Breakpoints, widthKey: string, rule: Rule, boundKey?: string) => {
-  const width = breakpoints[widthKey];
-  const bound = breakpoints[boundKey];
+(breakpoints: Breakpoints, initWidthKey: string, rule: Rule, initBoundKey?: string) => {
+  const { widthKey, boundKey } = getWidthKeyAndBoundKey(breakpoints, initWidthKey, initBoundKey);
+  let width = breakpoints[widthKey];
+  if (rule === 'down') {
+    try {
+      width = getBound(breakpoints, widthKey);
+    } catch (e) {
+      throw new Error(`The breakpoint of value ${widthKey} is the heighst, do you need breakpoints?`);
+    }
+  }
+
+  const bound = boundKey ? getBound(breakpoints, boundKey) : false;
+
   let baseWidthRule = mediaWidthRule(rule);
   let boudWidthRule;
 
@@ -57,18 +105,18 @@ export const mediaRules =
 
   if (bound && width) {
     // Get correct rule based on width relative to bound
-    baseWidthRule = mediaWidthRule(bound <= width ? 'down' : 'up');
-    boudWidthRule = mediaWidthRule(bound <= width ? 'up' : 'down');
+    baseWidthRule = mediaWidthRule('up');
+    boudWidthRule = mediaWidthRule('down');
 
-    baseRule = ruleTemplate(mediaWidthRule(bound <= width ? 'down' : 'up'), width);
+    baseRule = ruleTemplate(baseWidthRule, width);
     boundRule = ruleTemplate(boudWidthRule, bound);
     return [].concat([baseRule], bound ? [boundRule] : []).join(' and ');
   }
 
   if (!bound && rule === 'only') {
     // Get correct rule based on width relative to bound
-    boudWidthRule = mediaWidthRule(bound <= width ? 'up' : 'down');
-    boundRule = ruleTemplate(boudWidthRule, getNextMedia(breakpoints, width));
+    boudWidthRule = mediaWidthRule('down');
+    boundRule = ruleTemplate(boudWidthRule, getNextMedia(breakpoints, width) - 1);
   }
 
   return [].concat([baseRule], boundRule ? [boundRule] : []).join(' and ');

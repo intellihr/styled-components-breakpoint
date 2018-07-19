@@ -68,16 +68,22 @@ describe('mediaRules', () => {
     expect(mediaRules(breakpoints, 'm', 'up')).toBe('(min-width: 768px)');
   });
   it('returns max-width rule when the rule is "down"', () => {
-    expect(mediaRules(breakpoints, 'm', 'down')).toBe('(max-width: 768px)');
+    expect(mediaRules(breakpoints, 'm', 'down')).toBe('(max-width: 991px)');
+  });
+  it('returns error when the rule is "down" with max breakpoint', () => {
+    expect(() => mediaRules(breakpoints, 'xl', 'down')).toThrowError('The breakpoint of value xl is the heighst, do you need breakpoints?');
   });
   it('returns a range rule between min and max-width when both width and bound are present', () => {
-    expect(mediaRules(breakpoints, 'm', 'only', 'l')).toBe('(min-width: 768px) and (max-width: 992px)');
+    expect(mediaRules(breakpoints, 'm', 'only', 'l')).toBe('(min-width: 768px) and (max-width: 1199px)');
   });
   it('returns a range rule between max and min-width when the bound is lower than the width', () => {
-    expect(mediaRules(breakpoints, 'm', 'only', 's')).toBe('(max-width: 768px) and (min-width: 576px)');
+    expect(mediaRules(breakpoints, 'm', 'only', 's')).toBe('(min-width: 576px) and (max-width: 991px)');
+  });
+  it('returns a range rule with min-width only when the bound is the highest', () => {
+    expect(() => mediaRules(breakpoints, 'm', 'only', 'xl')).toThrowError('The breakpoint of value xl is the heighst, did you mean to use "[media].up"?');
   });
   it('returns a range rule between the width and the next upper breakpoint when the rule is "only" and the bound is undefined', () => {
-    expect(mediaRules(breakpoints, 'm', 'only')).toBe('(min-width: 768px) and (max-width: 992px)');
+    expect(mediaRules(breakpoints, 'm', 'only')).toBe('(min-width: 768px) and (max-width: 991px)');
   });
 });
 
@@ -89,39 +95,39 @@ describe('breakpoint', () => {
   describe('utilities', () => {
     describe('only', () => {
       it('Implicitly returns a range media query between breakpoint "m" and the next upper breakpoint', () => {
-        expect(bp.only('m')`baground: red;`[1]).toMatch('@media only screen and (min-width: 768px) and (max-width: 992px)');
+        expect(bp.only('m')`baground: red;`[1]).toMatch('@media only screen and (min-width: 768px) and (max-width: 991px)');
       });
       it('Returns a range media query between the first and second arguemt', () => {
-        expect(bp.only('m', 'xl')`baground: red;`[1]).toMatch('@media only screen and (min-width: 768px) and (max-width: 1200px)');
+        expect(bp.only('m', 'l')`baground: red;`[1]).toMatch('@media only screen and (min-width: 768px) and (max-width: 1199px)');
       });
       it('Returns a range media query stating from a higher breakpoint going down', () => {
-        expect(bp.only('xl', 'm')`baground: red;`[1]).toMatch('@media only screen and (max-width: 1200px) and (min-width: 768px)');
+        expect(bp.only('l', 'm')`baground: red;`[1]).toMatch('@media only screen and (min-width: 768px) and (max-width: 1199px)');
       });
     });
     describe('down', () => {
-      it('Returns a max-widht media query', () => {
-        expect(bp.down('m')`baground: red;`[1]).toMatch('@media only screen and (max-width: 768px)');
+      it('Returns a max-width media query', () => {
+        expect(bp.down('m')`baground: red;`[1]).toMatch('@media only screen and (max-width: 991px)');
       });
     });
     describe('up', () => {
-      it('Returns a min-widht media query', () => {
+      it('Returns a min-width media query', () => {
         expect(bp.up('m')`baground: red;`[1]).toMatch('@media only screen and (min-width: 768px)');
       });
     });
     describe('shorthand', () => {
-      it('Returns the min-widht media query for breakpoint xs', () => {
+      it('Returns the min-width media query for breakpoint xs', () => {
         expect(bp.xs`baground: red;`[1]).toMatch('@media only screen and (min-width: 320px)');
       });
-      it('Returns the min-widht media query for breakpoint s', () => {
+      it('Returns the min-width media query for breakpoint s', () => {
         expect(bp.s`baground: red;`[1]).toMatch('@media only screen and (min-width: 576px)');
       });
-      it('Returns the min-widht media query for breakpoint m', () => {
+      it('Returns the min-width media query for breakpoint m', () => {
         expect(bp.m`baground: red;`[1]).toMatch('@media only screen and (min-width: 768px)');
       });
-      it('Returns the min-widht media query for breakpoint l', () => {
+      it('Returns the min-width media query for breakpoint l', () => {
         expect(bp.l`baground: red;`[1]).toMatch('@media only screen and (min-width: 992px)');
       });
-      it('Returns the min-widht media query for breakpoint xl', () => {
+      it('Returns the min-width media query for breakpoint xl', () => {
         expect(bp.xl`baground: red;`[1]).toMatch('@media only screen and (min-width: 1200px)');
       });
     });

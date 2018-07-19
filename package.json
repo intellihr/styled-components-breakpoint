@@ -1,5 +1,5 @@
 {
-  "name": "@humblebee/styled-components-breakpoint",
+  "name": "@intellihr/styled-components-breakpoint",
   "version": "0.0.0-development",
   "description": "Utility functions for creating breakpoints in styled-components.",
   "main": "lib/index.js",
@@ -19,7 +19,7 @@
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch"
   },
-  "repository": "https://github.com/wearehumblebee/styled-components-breakpoint.git",
+  "repository": "https://github.com/intellihr/styled-components-breakpoint.git",
   "keywords": [
     "react",
     "styled-components",
@@ -36,7 +36,7 @@
   "author": "John Persson",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/wearehumblebee/styled-components-breakpoint/issues"
+    "url": "https://github.com/intellihr/styled-components-breakpoint/issues"
   },
   "files": [
     "dist",
@@ -46,7 +46,7 @@
     "coverageDirectory": "./coverage/",
     "collectCoverage": true
   },
-  "homepage": "https://github.com/wearehumblebee/styled-components-breakpoint#readme",
+  "homepage": "https://github.com/intellihr/styled-components-breakpoint",
   "devDependencies": {
     "babel": "^6.23.0",
     "babel-cli": "^6.26.0",
@@ -89,5 +89,7 @@
       "path": "./node_modules/cz-conventional-changelog"
     }
   },
-  "dependencies": {}
+  "dependencies": {
+    "lodash": "^4.17.10"
+  }
 }
