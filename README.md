@@ -76,9 +76,7 @@ breakpoint.only('s', 'l')
 ```
 
 ```javascript
-breakpoint.only('m', 'xl')
-// Will return a range media query between "m" and the max breakpoint passed as the second argument, "xl"
-// @media only screen and (min-width: 768px)
+breakpoint.only('m', 'xl') // Error! xl is the largest. You should use [media].up('m')
 ```
 
 #### Shorthand

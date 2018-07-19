@@ -4,6 +4,7 @@
   "description": "Utility functions for creating breakpoints in styled-components.",
   "main": "lib/index.js",
   "scripts": {
+    "publish": "yarn test && npm version patch && npm publish --access public",
     "prebuild": "rimraf lib",
     "build": "npm-run-all --parallel build:*",
     "build:umd": "webpack",
